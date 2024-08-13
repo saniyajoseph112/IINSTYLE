@@ -1,0 +1,64 @@
+{% extends 'user_side/base_user.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">LOGIN</h1>
+                <form method="post" action="" id="CustomerLoginForm" class="mb-4">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="{{ form.username.id_for_label }}">Email:</label>
+                        {{ form.username }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="{{ form.password.id_for_label }}">Password:</label>
+                        {{ form.password }}
+                        {% for error in form.password.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 mb-3">LOGIN</button>
+                </form>
+                
+                <p class="text-center mb-3">or sign in with</p>
+                
+                <div class="d-grid gap-2 mb-3">
+                    <button class="btn btn-outline-secondary">
+                        {% comment %} 
+                        <a style="color:white;" href="{% url 'social:begin' 'google-oauth2' %}">Sign in with Google</a> 
+                        {% endcomment %}
+                        Sign in with Google
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <a href="#" class="text-decoration-none">Forgot your password?</a> |
+                    <a href="{% url 'accounts:register' %}" class="text-decoration-none">Create account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (Popper.js and jQuery) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}
+
+

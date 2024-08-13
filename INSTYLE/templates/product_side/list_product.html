@@ -1,0 +1,118 @@
+{% extends 'admin_side/base_admin.html' %}
+{% load static %}
+{% block content %}
+<section class="content-main"> 
+    <div class="content-header"> 
+        <div> 
+            <h2 class="content-title card-title">Products</h2> 
+            
+        </div> 
+    </div> 
+    <div class="card mb-4"> 
+        <header class="card-header"> 
+            <div class="row gx-3"> 
+                <div class="col-lg-5 col-md-6 mb-2 mb-md-0">
+                    <form method="GET" action="" class="d-flex">
+                        <input type="text" name="q" placeholder="Search category" class="form-control bg-white me-2" value="{{ query }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+                <div class="col-lg-2 col-md-3 col-4"> 
+                    <select class="form-select"> 
+                        <option>Status</option> 
+                        <option>Active</option> 
+                        <option>Disabled</option> 
+                        <option>Show all</option> 
+                    </select> 
+                </div> 
+                <div class="col-lg-2 col-md-3 col-4"> 
+                    <select class="form-select"> 
+                        <option>Show 20</option> 
+                        <option>Show 30</option> 
+                        <option>Show 40</option> 
+                    </select> 
+                </div> 
+                <div class=" col-md-3 col-4"> 
+                    <a href="{% url 'product:create'%}" class="btn btn-primary">
+                        <i class="text-muted material-icons md-post_add"></i>Create products
+                    </a> 
+                </div>
+            </div> 
+        </header> 
+        <!-- card-header end// --> 
+        <div class="card-body"> 
+            <div class="table-responsive"> 
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Thumbnail</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Brand</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td style="vertical-align: middle;">{{ product.id }}</td>
+                            
+                            <td style="vertical-align: middle; padding-left:100px;">
+                                <div class="d-flex align-items-center">
+                                    {% if product.thumbnail %}
+                                    <img src="{{ product.thumbnail.url }}" class="img-fluid rounded" style="width: 50px; height: auto;" alt="{{ product.product_name }}">
+                                    {% else %}
+                                    <img src="{% static 'placeholder_image.jpg' %}" class="img-fluid rounded" style="width: 50px; height: auto;" alt="Placeholder Image">
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td style="vertical-align: middle;">{{ product.product_name }}</td>
+                            <td style="vertical-align: middle;">{{ product.product_category.category_name }}</td>
+                            <td style="vertical-align: middle;">{{ product.product_brand.brand_name }}</td>
+                            <td style="vertical-align: middle;">
+                                <span class="badge rounded-pill {% if product.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ product.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <a href="{% url 'product:details' product.id %}" class="btn btn-primary rounded font-sm">
+                                    More
+                                </a>
+                            </td>
+                            {% comment %}
+                            <td style="vertical-align: middle;" class="text-end">
+                                <a href="{% url 'product:product_delete' product.id %}" class="btn {% if product.is_active %}btn-danger{% else %}btn-success{% endif %} rounded font-sm">
+                                    {% if product.is_active %}
+                                    Block
+                                    {% else %}
+                                    Unblock
+                                    {% endif %}
+                                </a>
+                            </td>
+                            {% endcomment %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                                
+                
+            </div> <!-- table-responsive//end --> 
+        </div> 
+        <!-- card-body end// --> 
+    </div> 
+    <div class="pagination-area mt-30 mb-50"> 
+        <nav aria-label="Page navigation example"> 
+                {% comment %} <ul class="pagination justify-content-start"> 
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li> 
+                    <li class="page-item"><a class="page-link" href="#">02</a></li> 
+                    <li class="page-item"><a class="page-link" href="#">03</a></li> 
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li> 
+                    <li class="page-item"><a class="page-link" href="#">16</a></li> 
+                    <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li> 
+                </ul>  {% endcomment %}
+        </nav> 
+    </div> 
+</section>
+{% endblock %}

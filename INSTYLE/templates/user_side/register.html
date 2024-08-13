@@ -1,0 +1,132 @@
+{% extends 'user_side/base_user.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/registrations/registration-3/assets/css/registration-3.css">
+</head>
+<body>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  max-width: 2000px;
+  margin: 50px auto;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.left-column {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8f8f8;
+}
+
+.right-column {
+  flex: 1;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.btn-signup {
+  width: 100%;
+  padding: 10px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-signup:hover {
+  background-color: #333;
+}
+</style>
+<!-- Registration 3 - Bootstrap Brain Component -->
+<section class="p-md-2 p-xl-5" style="height: 400px; width: 100%;">
+    <div class="container">
+        <div class="left-column">
+          <h1>Welcome!</h1>
+          <img src="{% static 'banner/front.jpg' %}"alt="BootstrapBrain Logo" class="logo">
+        </div>
+        <div class="right-column">
+          <h2>REGISTRATION</h2>
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+              <label for="{{ forms.first_name.id_for_label }}">First Name *</label>
+              {{ forms.first_name }}
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ forms.last_name.id_for_label }}">Last Name *</label>
+              {{ forms.last_name }}
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ forms.email.id_for_label }}">Email *</label>
+              {{ forms.email }}
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ forms.password.id_for_label }}">Password *</label>
+              {{ forms.password }}
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ forms.confirm_password.id_for_label }}">Confirm Password *</label>
+              {{ forms.confirm_password }}
+            </div>
+            
+            <button type="submit" class="btn-signup">Sign up</button>
+          </form>
+        </div>
+      </div>
+</body>
+{% endblock %}
