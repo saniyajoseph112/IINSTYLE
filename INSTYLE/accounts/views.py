@@ -4,16 +4,17 @@ from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model, login as auth_login
 from django.contrib.auth import logout as auth_logout
 import logging
-from time import timezone
+from django.utils import timezone
 from product.models import *
 from .forms import Emailauthentication
 from category.models import *
 from Brands.models import *
+from django.http import JsonResponse
 
 
 
@@ -49,10 +50,37 @@ def logout(request):
 
 
 def shop_page(request):
-    products = Products.objects.all()
-    categories=Category.objects.all()
-    brands=Brand.objects.all()
-    return render(request, 'user_side/shop.html', {'products':products,'categories':categories,'brands':brands})
+    LH = request.GET.get('LH')
+    HL = request.GET.get('HL')
+    AR = request.GET.get('AR')
+    NN = request.GET.get('NN')
+    category_name = request.GET.get('category')
+    brand_name = request.GET.get('brand')
+
+    # Filter products based on sorting options
+    if LH == "Low_to_High":
+        products = Products.objects.order_by('offer_price')
+    elif HL == "High_to_Low":
+        products = Products.objects.order_by('-offer_price')
+    elif AR == "average_rating":
+        products = Products.objects.order_by('-average_rating')  
+    elif NN == "Newness":
+        products = Products.objects.order_by('-created_at')
+    else:
+        products = Products.objects.all()
+
+    # Filter products by category if a category is selected
+    if category_name:
+        products = products.filter(product_category__category_name=category_name)
+
+    # Filter products by brand if a brand is selected
+    if brand_name:
+        products = products.filter(product_brand__brand_name=brand_name)    
+    
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
+
+    return render(request, 'user_side/shop.html', {'products': products, 'categories': categories, 'brands': brands})
 
 
 def register(request):
@@ -77,25 +105,25 @@ def register(request):
 
             subject = 'Your OTP Code'
             message = f"""
-        Dear {User_data.first_name},
+            Dear {User_data.first_name},
 
-        Welcome to INSTYLE!
+            Welcome to INSTYLE!
 
-        Thank you for joining our fashion community. We are thrilled to have you on board and can't wait for you to explore our latest collections and exclusive offers.
+            Thank you for joining our fashion community. We are thrilled to have you on board and can't wait for you to explore our latest collections and exclusive offers.
 
-        To complete your registration, please verify your email address using the One-Time Password (OTP) provided below:
+            To complete your registration, please verify your email address using the One-Time Password (OTP) provided below:
 
-        Your OTP: {otp}
+            Your OTP: {otp}
 
-        Enter this OTP on the website to verify your account and get started.
+            Enter this OTP on the website to verify your account and get started.
 
-        If you have any questions or need assistance, feel free to reach out to our support team at support@instyle.com.
+            If you have any questions or need assistance, feel free to reach out to our support team at support@instyle.com.
 
-        Stay stylish!
+            Stay stylish!
 
-        Best regards,
-        The INSTYLE Team
-        """
+            Best regards,
+            The INSTYLE Team
+            """
             email_from = settings.DEFAULT_FROM_EMAIL
             recipient_list = [User_data.email]
             
@@ -143,7 +171,7 @@ def verify_otp(request):
             else:
                 forms.add_error('otp', 'Invalid OTP')
     else:
-        forms = OtpForm()
+        forms= OtpForm()
     return render(request, 'user_side/verify.html', {'forms': forms})
 
 
@@ -191,11 +219,31 @@ def product_detail_user(request,pk):
     return render(request,'user_side/product_detailuser.html',{'products':products,'images':images,'related_products':related_products,'reviews':reviews,'varients':varients}) 
 
 
-def userdash(request):
-    user_data=User.objects.get(id=request.user.id)
-    return render(request, 'user_side/userdash.html',{'user_data':user_data})
 
+def search(request):
+    query = request.GET.get('q', '')
+    print(query)
+    if query:
+        results = Products.objects.filter(
+            product_name__icontains=query
+        ) | Products.objects.filter(
+            product_brand__brand_name__icontains=query
+        ) | Products.objects.filter(
+            product_description__icontains=query
+        )
+        
+        data = {
+            'results': [
+                {
+                    'name': result.product_name,
+                    'url': f'/product/product-details/{result.id}/',  # Ensure this matches your URL pattern
+                    'thumbnail': result.thumbnail.url if result.thumbnail else ''
+                }
+                for result in results
+            ]
+        }
+    else:
+        data = {'results': []}
 
-
-
+    return JsonResponse(data)
 

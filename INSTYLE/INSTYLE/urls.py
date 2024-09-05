@@ -26,6 +26,9 @@ urlpatterns = [
     path('category_management/',include('category.urls')),
     path('Brand/',include('Brands.urls')),
     path('products/',include('product.urls')),
+    path('userpanel/',include('userpanel.urls')),
+    path('cart/',include('cart.urls')),
+    path('auth/', include('social_django.urls', namespace='social')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

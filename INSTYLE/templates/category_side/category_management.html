@@ -62,7 +62,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="{% url 'category:available-category' category.id %}" class="btn btn-warning btn-sm me-2" onclick="confirmAction('{% url 'category:available-category' category.id %}', '{% if category.is_available %}Are you sure you want to delete this category?{% else %}Are you sure you want to restore this category?{% endif %}')">
+                                    <a href="{% url 'category:available-category' category.id %}" class="btn btn-warning btn-sm me-2" id="action-link">
                                         {% if category.is_available %}Delete{% else %}Restore{% endif %}
                                     </a>
                                     <a href="{% url 'category:edit-category'  category.id %}" class="btn btn-secondary btn-sm">Edit</a>
@@ -89,22 +89,32 @@
         </nav>
     </div>
 </section> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    function confirmAction(url, message) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: message,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, do it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = url;
-            }
+    <script>
+        document.getElementById('action-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            const url = this.getAttribute('href');
+            const message = this.textContent.trim() === 'Delete'
+                ? 'Are you sure you want to delete this category?'
+                : 'Are you sure you want to restore this category?';
+    
+            Swal.fire({
+                title: 'Confirmation',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
         });
-    }
-</script>
+    </script>
+
+
 {% endblock content  %}

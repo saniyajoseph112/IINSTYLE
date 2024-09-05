@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'category',
     'Brands',
     'product',
+    'userpanel',
+    'social_django', 
+    'cart',
     
-    
-]
 
+]
 
 
 MIDDLEWARE = [
@@ -57,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.Middleware.SocialAuthExceptionMiddleware',  # Add this line
+    'accounts.Middleware.CheckUserBlockedMiddleware',  # Add this line
 ]
 
 ROOT_URLCONF = 'INSTYLE.urls'
@@ -72,6 +76,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect'
             ],
         },
     },
@@ -109,7 +115,23 @@ AUTH_USER_MODEL = 'accounts.User'
 
 
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',  # Add Google OAuth2 backend
+    'django.contrib.auth.backends.ModelBackend',  # Keep the default authentication backend
+)
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '746091800744-qgsqvrhrjhgbfet2vuqu0d9msj3ophbi.apps.googleusercontent.com'  # Your Google Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Your Google Client Secret
+
+
+LOGIN_REDIRECT_URL = '/'  # URL to redirect after successful login
+LOGOUT_REDIRECT_URL = '/'  # URL to redirect after logout
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'  # Adjust this to your actual login URL
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -162,3 +184,18 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'accounts.pipeline.save_user_details',
+    'accounts.pipeline.activate_user',
+    'accounts.pipeline.check_if_user_blocked',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)

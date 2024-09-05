@@ -92,7 +92,7 @@
 	<section class="section-slide">
 		<div class="wrap-slick1 rs1-slick1">
 			<div class="slick1">
-				<div class="item-slick1" style="background-image: url('{% static "banner/slide-05.jpg" %}');">
+				<div class="item-slick1" style="background-image: url('{% static "banner/318785.jpg" %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
@@ -116,7 +116,7 @@
 					</div>
 				</div>
 
-				<div class="item-slick1" style="background-image: url('{% static "banner/slide-01.jpg" %}');">
+				<div class="item-slick1" style="background-image: url('{% static "banner/318854.jpg" %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
@@ -140,7 +140,7 @@
 					</div>
 				</div>
 
-				<div class="item-slick1" style="background-image: url('{% static "banner/slide-04.jpg" %}');">
+				<div class="item-slick1" style="background-image: url('{% static "banner/333808.jpg" %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
@@ -174,7 +174,7 @@
 			<div class="size-202 m-lr-auto respon4">
 				<!-- Block1 -->
 				<div class="block1 wrap-pic-w">
-					<img src="{% static 'banner/picture9.jpg' %}" alt="IMG-BANNER">
+					<img src="{% static 'banner/b7.jpg' %}" alt="IMG-BANNER">
 
 					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
@@ -199,7 +199,7 @@
 			<div class="size-202 m-lr-auto respon4">
 				<!-- Block1 -->
 				<div class="block1 wrap-pic-w">
-					<img src="{% static 'banner/picture10.jpg' %}" alt="IMG-BANNER">
+					<img src="{% static 'banner/b6.jpg' %}" alt="IMG-BANNER">
 
 					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
@@ -224,7 +224,7 @@
 			<div class="size-202 m-lr-auto respon4">
 				<!-- Block1 -->
 				<div class="block1 wrap-pic-w">
-					<img src="{% static 'banner/picture7.jpg' %}" alt="IMG-BANNER">
+					<img src="{% static 'banner/b4.jpg' %}" alt="IMG-BANNER">
 
 					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
@@ -274,7 +274,11 @@
 								    <div class="block2">
 								       <div class="block2-pic hov-img0">
 										<a href="{% url 'accounts:product_detailuser' product.id %}" >
+											{% if product.thumbnail %}
 								            <img src="{{ product.thumbnail.url }}" alt="{{ product.product_name }}">
+											{% else %}
+											<span>No Image</span>
+											{% endif %}
 										</a>
 								            {% comment %} <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 								                Quick View
@@ -320,6 +324,33 @@
 	{% comment %} <section class="bg0 p-t-23 p-b-130">
 		<div class="container">
 			<div class="p-b-10"> {% endcomment %}
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> 
+				<!-- Bootstrap JS and dependencies -->
+				<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+				<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+				<script>
+					document.addEventListener('DOMContentLoaded', (event) => {
+					{% if messages %}
+						const messages = [
+							{% for message in messages %}
+								"{{ message }}",
+							{% endfor %}
+						];
+						messages.forEach(message => {
+							Swal.fire({
+								toast: true,
+								position: 'top-right',
+								icon: 'success',
+								title: message,
+								showConfirmButton: false,
+								timer: 3000
+							});
+						});
+					{% endif %}
+				});
+				</script>
 	
 	
 {% endblock %}
