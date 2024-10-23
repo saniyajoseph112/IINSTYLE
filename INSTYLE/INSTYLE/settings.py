@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'userpanel',
     'social_django', 
     'cart',
+    'order',
+    'coupon',
     
 
 ]
@@ -77,7 +79,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect'
+                'social_django.context_processors.login_redirect',
+                'cart.context_processor.cart_and_wishlist_counts',
             ],
         },
     },
@@ -199,3 +202,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+
+RAZORPAY_KEY = 'rzp_test_k3jJlpvXZAD5FJ'
+RAZORPAY_SECRET = 'VXKhYVud2BI4kVnLPWqBEIlJ'

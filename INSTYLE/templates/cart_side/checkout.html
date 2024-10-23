@@ -1,461 +1,428 @@
-<!-- @format -->
 {% extends 'user_side/base_user.html' %}
 {% load static %}
 {% block content %}
 
 <style>
-  .black-hover-button {
-    background-color: transparent !important;
-    color: black !important;
-  }
-  .black-hover-button:hover {
-    background-color: black;
-    color: white !important;
-  }
-
-  .black-hover-button:focus {
-    background-color: black !important;
-    color: white !important;
-  }
-
-  .black-hover-button input[type="checkbox"]:checked {
-    background-color: black;
-    color: white !important;
-  }
-
     /* General Styles */
     .breadcrumb-wrap {
-      background-color: #f8f9fa;
-      padding: 20px 0;
-      margin-bottom: 30px;
+        background-color: #f8f9fa;
+        padding: 20px 0;
+        margin-bottom: 30px;
     }
-  
-    .breadcrumb a {
-      color: #6c757d;
-      text-decoration: none;
-    }
-  
-    .breadcrumb a:hover {
-      color: #343a40;
-    }
-  
-    /* Section Titles */
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #343a40;
-    }
-  
-    /* Card Styles */
-    .card {
-      border: 1px solid #e3e6e8;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-    }
-  
-    .card-header {
-      background-color: #f8f9fa;
-      font-weight: bold;
-      padding: 15px;
-      border-bottom: 1px solid #e3e6e8;
-    }
-  
-    .card-body {
-      padding: 20px;
-    }
-  
-    /* Button Styles */
+
     .btn-fill-out {
-      background-color: #343a40;
-      color: #ffffff;
-      border: 1px solid #343a40;
-      border-radius: 4px;
-      padding: 10px 20px;
-      transition: all 0.3s ease;
+        background-color: #343a40;
+        color: #ffffff;
+        border: 1px solid #343a40;
+        border-radius: 4px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
     }
-  
-    .btn-fill-out:hover,
-    .btn-fill-out:focus {
-      background-color: #000000;
-      border-color: #000000;
-      color: #ffffff;
+
+    .modal {
+        z-index: 1050; /* Ensure the modal appears above other elements */
     }
+
+    .modal-body {
+      padding: 1.5rem;
+  }
   
-    /* Address Accordion Styles */
-    .accordion-button {
-      background-color: transparent !important;
-      color: #343a40 !important;
+  .list-group-item {
       border: none;
-      font-size: 1rem;
-    }
+      border-bottom: 1px solid #eee;
+  }
   
-    .accordion-button:hover,
-    .accordion-button:focus {
-      background-color: #343a40;
-      color: #ffffff !important;
-    }
+  .list-group-item:last-child {
+      border-bottom: none;
+  }
   
-    .accordion-body {
-      padding: 15px;
-      background-color: #f8f9fa;
-    }
+  .badge {
+      font-size: 0.9rem;
+      padding: 0.3rem 0.6rem;
+  }
   
-    /* Input Styles */
-    .form-control {
-      border: 1px solid #e3e6e8;
-      border-radius: 4px;
-      padding: 10px;
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-  
-    .form-control:focus {
-      border-color: #343a40;
-      box-shadow: none;
-    }
-  
-    /* Modal Styles */
-    .modal-header {
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #e3e6e8;
-    }
-  
-    .modal-title {
-      font-size: 1.25rem;
-      font-weight: bold;
-    }
-  
-    /* Address Checkbox Styles */
-    .address-checkbox {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-  
-    /* Order Summary Styles */
-    .order-summary {
-      background-color: #f8f9fa;
-      padding: 15px;
-      border: 1px solid #e3e6e8;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-  
-    .order-summary span {
-      font-weight: 600;
-      color: #343a40;
-    }
-  
-    .order-summary .text-success {
-      color: #28a745;
-    }
-  
-    .order-summary .text-danger {
-      color: #dc3545;
-    }
-  
-    /* Payment Section Styles */
-    .payment-method-title {
-      font-size: 1.25rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-  
-    .form-check-label {
-      margin-left: 10px;
-      font-size: 1rem;
-    }
-  
-    .btn-outline-dark {
-      border-color: #343a40;
-      color: #343a40;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-  
-    .btn-outline-dark:hover {
-      background-color: #343a40;
-      color: #ffffff;
-    }
-  
-    /* Hover Button Styles */
-    .black-hover-button {
-      background-color: transparent !important;
-      color: black !important;
-    }
-  
-    .black-hover-button:hover,
-    .black-hover-button:focus {
-      background-color: black;
-      color: white !important;
-    }
-  
-    /* Additional Form Styles */
-    .required {
-      color: #dc3545;
-    }
-  
- 
 </style>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <main class="main">
     <div class="container">
-		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-			<a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
-				Home
-				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-			</a>
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+            <span class="stext-109 cl4">Shopping Cart</span>
+        </div>
 
-			<span class="stext-109 cl4">
-				Shoping Cart
-			</span>
-		</div>
-	</div>
-  <section class="mt-60 mb-50 " style="margin-top:30px;">
-      <div class="container">
-          <div class="row">
-          <div class="col-md-6">
-          <div class="mb-25">
-            <h4></h4>
-          </div>
-          <div class="mb-25">
-            <button type="button" class="btn btn-fill-out btn-block hover-up" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-              Add New Address
-          </button>
-          </div>
-          <div>
+        <section class="mt-60 mb-50">
             <div class="row">
-              <div class="col-lg-6" style="width: 700px">
-                <form method="post" action="">
+                <div class="col-md-6">
+                    <div class="mb-25">
+                        <a href="{% url 'cart:create_address2' %}">
+                            <button type="button" style="background-color:black;" class="btn btn-fill-out btn-block hover-up"><i style="color:white;">Add New Address</i></button>
+                        </a>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-3">
+                                    {% for address in user_address %}
+                                    <div class="btn-group w-80 pb-2">
+                                        <label class="btn btn-secondary w-100 address-checkbox-label">
+                                          <input
+                                          type="radio" 
+                                          class="form-check-input me-2 address-checkbox"
+                                          id="address_{{ address.id }}"
+                                          name="address"
+                                          data-address-id="{{ address.id }}"
+                                          {% if address.status %}checked{% endif %} />
+
+
+                                            {{ address.name }}
+                                        </label>
+                                        <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" type="button" id="dropdownMenuButton{{ address.id }}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ address.id }}">
+                                            <li><p class="dropdown-item"><strong>House Name:</strong> {{ address.house_name }}</p></li>
+                                            <li><p class="dropdown-item"><strong>Street Name:</strong> {{ address.street_name }}</p></li>
+                                            <li><p class="dropdown-item"><strong>Pin Number:</strong> {{ address.pin_number }}</p></li>
+                                            <li><p class="dropdown-item"><strong>District:</strong> {{ address.district }}</p></li>
+                                            <li><p class="dropdown-item"><strong>State:</strong> {{ address.state }}</p></li>
+                                            <li><p class="dropdown-item"><strong>Country:</strong> {{ address.country }}</p></li>
+                                        </ul>
+                                    </div>
+                                    {% empty %}
+                                    <p>No addresses found.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Orders Section -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Your Orders</h4>
+                            <div class="order-items">
+                                {% for item in cart_items %}
+                                <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                    <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.product_name }}" class="img-fluid rounded me-3" style="width: 60px; height: 60px; object-fit: cover" />
+                                    <div class="flex-grow-1 pl-2">
+                                        <h6 class="mb-0">{{ item.product.product_name }}</h6>
+                                        <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="fw-bold">₹{{ item.sub_total }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="order-summary mt-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal</span>
+                                    <span>₹{{ sub_total }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping</span>
+                                    <span class="text-success">Free</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Discount</span>
+                                    <span class="text-success discount" id="discount">{{ discount }}%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Discount Amount</span>
+                                    <span class="text-success discount_amount" >₹{{ discount_amount }}</span>
+                                </div>
+                                <div class="flex-w flex-t p-t-27 p-b-33">
+                                    <div class="size-208">
+                                        <span class="mtext-101 cl2">Total:</span>
+                                    </div>
+                                    <div class="size-209 p-t-1" style="padding-left:260px;">
+                                        <span class="mtext-110 cl2 cart-total" >{{ sub_total }}</span>
+                                    </div>
+                                </div>
+                                
+							<div class="flex-w flex-m m-r-20 m-tb-5">
+                <form method="post" action="#">
                   {% csrf_token %}
-                  <div class="card mb-3 mb-lg-0">
-                  {% for address in user_address %}
-                  <div class="accordion-item">
-                    <h2
-                      class="accordion-header"
-                      id="heading{{ address.id }}"
-                      style="transition: background-color 0.3s, color 0.3s"
-                      onmouseover="this.style.backgroundColor='black'; this.style.color='white';"
-                      onmouseout="this.style.backgroundColor=''; this.style.color='';">
-                      <button
-                        class="accordion-button collapsed black-hover-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapse{{ address.id }}"
-                        aria-expanded="false"
-                        aria-controls="collapse{{ address.id }}">
-                        <input
-                          type="checkbox" 
-                          class="form-check-input me-2 address-checkbox"
-                          id="address_{{ address.id }}"
-                          data-address-id="{{ address.id }}"
-                          {% if address.status %}checked{%endif%} />
-                        {{ address.name }}
-                      </button>
-                    </h2>
-                    <div
-                      id="collapse{{ address.id }}"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="heading{{ address.id }}"
-                      data-bs-parent="#accordionExample">
-                      <div class="accordion-body">
-                        <address>
-                          <p class="mb-1">
-                            <strong>House Name:</strong> {{ address.house_name}}
-                          </p>
-                          <p class="mb-1">
-                            <strong>Street Name:</strong> {{ address.street_name}}
-                          </p>
-                          <p class="mb-1">
-                            <strong>Pin Number:</strong> {{ address.pin_number}}
-                          </p>
-                          <p class="mb-1">
-                            <strong>District:</strong> {{ address.district }}
-                          </p>
-                          <p class="mb-1">
-                            <strong>State:</strong> {{ address.state }}
-                          </p>
-                          <p class="mb-1">
-                            <strong>Phone Number:</strong> {{ address.phone_number }}
-                          </p>
-                          <p class="mb-1">
-                            <strong>Country:</strong> {{ address.country }}
-                          </p>
-                        </address>
-                      </div>
-                    </div>
-                  </div>
-                  {% empty %}
-                  <p>No addresses found.</p>
-                  {% endfor %}
-                </div>
-              </div>
-              <br />
-            </div>
-          </div>
-        </div>
-        <!-- Your Orders Section -->
-        <div class="col-md-6">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h4 class="card-title mb-4">Your Orders</h4>
-              <div class="order-items">
-                {% for item in cart_items %}
-                <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                  <img
-                    src="{{ item.product.thumbnail.url }}"
-                    alt="{{ item.product.product_name }}"
-                    class="img-fluid rounded me-3"
-                    style="width: 60px; height: 60px; object-fit: cover" />
-                  <div class="flex-grow-1 pl-2">
-                    <h6 class="mb-0">{{ item.product.product_name }}</h6>
-                    <small class="text-muted" style="padding-right:300px;"
-                      >Quantity: {{ item.quantity }}</small
-                    >
-                  </div>
-                  <div class="text-end">
-                    <span class="fw-bold">₹{{ item.sub_total }}</span>
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
-              <div class="order-summary mt-4">
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Subtotal</span>
-                  <span>₹{{ cart_total }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Shipping</span>
-                  <span class="text-success">Free</span>
-                </div>
-                {% comment %} <div class="d-flex justify-content-between mb-2">
-                  <span>Coupon Applied</span>
-                  <span class="text-danger">{{ coupon_name }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Discount</span>
-                  <span class="text-danger">{{ discount }}-</span>
-                </div> {% endcomment %}
-                <div
-                  class="d-flex justify-content-between fw-bold mt-3 pt-3 border-top">
-                  <span>Total</span>
-                  <span>₹{{ cart_total }}</span>
-                </div>
-              </div>
+								<input id="coupon-input" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
+									
+								<button id="apply-coupon" type="button" class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+									Apply coupon
+                </button>
+                <button id="remove-coupon" type="button" class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+									Remove coupon
+                </button>
 
-              <hr class="my-4" />
-              <form method="post" action="">
-                {% csrf_token %}
-                <h5 class="mb-3">Payment Method</h5>
-                <div class="mb-3"style="">
-                    <div class="form-check mb-2">
-                      <input class="form-check-input me-2mr-5" type="radio" name="payment_option" value="Cash On Delivery" id="cashOnDelivery" checked />
-                      <label class="form-check-label" for="cashOnDelivery">Cash On Delivery</label>
+              </form>
+								
+                                <button type="button" class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" data-bs-toggle="modal" data-bs-target="#couponModal">Available Coupons</button>
+                            </div>
+                            <hr class="my-4" />
+                            <form method="post" action="{% url 'order:order_verification' %}">
+                                {% csrf_token %}
+                                <h5 class="mb-3">Payment Method</h5>
+                                <div class="mb-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="payment_option" value="Cash On Delivery" id="cashOnDelivery" checked />
+                                        <label class="form-check-label" for="cashOnDelivery">Cash On Delivery</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="payment_option" value="Wallet" id="Wallet" /> Wallet(<label class=" cart-total" for="Wallet">₹{{ wallet_balance }}</label>)       
+                                    </div>
+                                    
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="payment_option" value="Online Payment" id="onlinePayment" />
+                                        <label class="form-check-label" for="onlinePayment">Online Payment</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-dark w-100 mt-3">Place Order</button>
+                            </form>
+                        </div>
                     </div>
-                    {% comment %} <div class="form-check mb-2">
-                      <input class="form-check-input me-2" type="radio" name="payment_option" value="Wallet" id="wallet" />
-                      <label class="form-check-label" for="wallet">Wallet ( ₹{{ cart_total }} )</label>
-                    </div> {% endcomment %}
-                    <div class="form-check">
-                      <input class="form-check-input me-2" type="radio" name="payment_option" value="Online Payment" id="onlinePayment" />
-                      <label class="form-check-label" for="onlinePayment">Online Payment</label>
-                    </div>
-                  </div>
-                  
-                <button type="submit" class="btn btn-outline-dark w-100 mt-3">Place Order</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- Modal -->
-<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="post" name="edit_address_form" action="">
-            {% csrf_token %}
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label>Name <span class="required">*</span></label>
-                    <input required class="form-control square" name="name" type="text" value="{{ users.name }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>House Name <span class="required">*</span></label>
-                    <input required class="form-control square" name="house_name" value="{{ users.house_name }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Street Name <span class="required">*</span></label>
-                    <input required class="form-control square" name="street_name" type="text" value="{{ users.street_name }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Pin Number <span class="required">*</span></label>
-                    <input required class="form-control square" name="pin_number" value="{{ users.pin_number }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>District <span class="required">*</span></label>
-                    <input required class="form-control square" name="district" type="text" value="{{ users.district }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>State <span class="required">*</span></label>
-                    <input required class="form-control square" name="state" value="{{ users.state }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Country <span class="required">*</span></label>
-                    <input required class="form-control square" name="country" type="text" value="{{ users.country }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Phone Number <span class="required">*</span></label>
-                    <input required class="form-control square" name="phone_number" value="{{ users.phone_number }}">
-                </div>
-                <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="is_active" name="status" {% if users.status %}checked{% endif %}>
-                    <label class="form-check-label" for="is_active">Status</label>
-                </div>
-                <div class="col-md-12">
-                    <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
                 </div>
             </div>
-        </form>
+        </section>
+
+        <!-- Modal -->
+        
+        <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      {% if available_coupons %}
+                      <div class="list-group">
+                          {% for coupon in available_coupons %}
+                          <div class="list-group-item d-flex justify-content-between align-items-center">
+                              <div>
+                                  <h6 class="mb-2">{{ coupon.coupon_name }}</h6>
+                                  <p class="mb-1">
+                                      <strong>Code:</strong> {{ coupon.coupon_code }}<br />
+                                      <strong>Discount:</strong> {{ coupon.discount }}%<br />
+                                      <strong>Expiry Date:</strong> {{ coupon.expiry_date|date:"F j, Y" }}<br />
+                                      <strong>Maximum Discount:</strong> ₹{{ coupon.maximum_amount }}<br />
+                                      <strong>Minimum Purchase:</strong> ₹{{ coupon.minimum_amount }}<br />
+                                      <strong>Status:</strong> 
+                                      {% if coupon.status %}
+                                          <span class="badge bg-success">Active</span>
+                                      {% else %}
+                                          <span class="badge bg-danger">Inactive</span>
+                                      {% endif %}
+                                  </p>
+                              </div>
+                              <button class="btn btn-primary apply-coupon" data-coupon-code="{{ coupon.coupon_code }}">Apply</button>
+                          </div>
+                          {% endfor %}
+                      </div>
+                      {% else %}
+                      <p class="text-center">No available coupons at the moment.</p>
+                      {% endif %}
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
       </div>
+      
+      
+        
     </div>
-  </div>
-</div>
 
 </main>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    {% if messages %}
+  const csrfToken = '{{ csrf_token }}'; 
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        {% if messages %}
         const messages = [
             {% for message in messages %}
-                {
-                    type: "{{ message.tags }}",  // assuming message.tags contains the type ('success', 'error', etc.)
-                    text: "{{ message }}"
-                },
+            {
+                type: "{{ message.tags }}",
+                text: "{{ message }}"
+            },
             {% endfor %}
         ];
         messages.forEach(message => {
             Swal.fire({
                 toast: true,
-                position: 'top-right',
-                icon: message.type === 'error' ? 'error' : 'success',  // Show error icon for error messages
+                position: 'bottom-right',
+                icon: message.type === 'error' ? 'error' : 'success',
                 title: message.text,
                 showConfirmButton: false,
                 timer: 3000,
-                background: message.type === 'error' ? '#f8d7da' : '', // Optional: customize background color for errors
-                color: message.type === 'error' ? '#721c24' : ''       // Optional: customize text color for errors
+                background: message.type === 'error' ? '#f8d7da' : '',
+                color: message.type === 'error' ? '#721c24' : ''
             });
         });
-    {% endif %}
+        {% endif %}
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".address-checkbox").forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+          const addressId = this.dataset.addressId;  // Should work correctly here
+          console.log(addressId)
+          if (addressId) {
+            $.ajax({
+            url: '{% url "cart:update_selected_address" %}',
+            method: "POST",
+            contentType: "application/json",
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'  // Correctly set CSRF token in headers
+            },
+            data: JSON.stringify({
+                address_id: addressId,  // Just the address ID in the body
+            }),
+            success: function (response) {
+                if (response.status === 'success') {
+                    document.querySelectorAll(".address-checkbox").forEach((cb) => {
+                        cb.checked = false;
+                    });
+                    checkbox.checked = true;
+                    console.log("Address status toggled successfully.");
+                } else {
+                    console.error("Failed to toggle address status:", response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error toggling address status:", error);
+            },
+        });
+
+          } else {
+            console.error("Address ID not found.");
+          }
+        });
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get the coupon input field
+      const couponInput = document.querySelector('input[name="coupon"]');
+  
+      // Add event listener to all "Apply" buttons in the modal
+      document.querySelectorAll('.apply-coupon').forEach(button => {
+          button.addEventListener('click', function () {
+              const couponCode = this.getAttribute('data-coupon-code');
+  
+              // Paste the coupon code into the coupon input field
+              if (couponInput) {
+                  couponInput.value = couponCode;
+              }
+  
+              // Close the modal after applying the coupon
+              const couponModal = document.getElementById('couponModal');
+              const modalInstance = bootstrap.Modal.getInstance(couponModal);
+              if (modalInstance) {
+                  modalInstance.hide();
+              }
+          });
+      });
+  });
+  
+  //apply coupon
+
+  $(document).ready(function() {
+    $('#apply-coupon').click(function() {
+        var couponCode = $('#coupon-input').val();
+        $.ajax({
+            url: "{% url 'coupon:apply_coupon' %}",
+            type: 'POST',
+            data: {
+                'coupon': couponCode,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update the cart total
+                    console.log(response.discount_amount)
+                    $('.cart-total').text('₹' + response.new_total);
+                    $('.discount_amount').text('₹' + response.discount_amount);
+                    $('.discount').text(response.discount + '%');
+                    $('.wallet_balance').text('Wallet ( ₹' + response.wallet_balance + ' )');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again.',
+                });
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    // remove coupon
+    $('#remove-coupon').click(function() {
+        $.ajax({
+            url: "{% url 'coupon:remove_coupon' %}",
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update the cart total
+                    $('.cart-total').text('₹' + response.new_total);
+                    $('.discount_amount').text('₹0');
+                    $('.discount').text('0%');
+                    $('.wallet_balance').text('Wallet ( ₹' + response.wallet_balance + ' )');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message || 'Failed to remove coupon.',
+                    });
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again.',
+                });
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+      });      
 });
-</script>
-{% endblock %}
+
+  
+  </script>
+
+{% endblock content %}

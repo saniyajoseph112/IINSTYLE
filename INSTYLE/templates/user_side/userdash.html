@@ -251,7 +251,7 @@
                                                         <tr> 
                                                             <td> 
                                                                 {% if order_sub.variant.product.thumbnail %}
-                                                                <img src="{% static '{{ order_sub.variant.product.thumbnail.url }}' %}"  alt="{{ order_sub.variant.product.product_name }}" style="width: 100px;"> 
+                                                                <img src="{% static '{{ product.thumbnail.url }}' %}"  alt="{{ order_sub.variant.product.product_name }}" style="width: 100px;"> 
                                                                 {% endif %}
                                                                 <div>Order ID:</div> 
                                                                 <div>{{ order.order_id }}</div>
@@ -263,15 +263,25 @@
                                                                 {{ order.address.state}}<br>
                                                                 {{ order.address.pin_number}} 
                                                             </td> 
-                                                            <td>₹{{ order.total_amount }}</td> 
+                                                            <td>₹{{ order.final_amount }}</td> 
                                                             <td> 
                                                                 {{ order.date }}<br>
                                                             </td>
-                                                            <td><span {% if order.order_status == "Order Placed" %} class="badge bg-success" {% elif order.order_status == "Confirmed" %} class="badge bg-warning" {% elif order.order_status == "Shipped" %} class="badge bg-primary" {% else %}class="badge bg-danger" {% endif %}>{{ order.order_status }}</span></td> 
+                                                            <td>{% if order.order_status == "Delivery" %}
+                                                                <span class="badge bg-success">Delivered</span>
+                                                            {% else %}
+                                                                <span class="badge 
+                                                                    {% if order.order_status == "Confirmed" %} bg-warning 
+                                                                    {% elif order.order_status == "Shipped" %} bg-primary 
+                                                                    {% else %} bg-danger 
+                                                                    {% endif %}">
+                                                                    {{ order.order_status }}
+                                                                </span>
+                                                            {% endif %}</td>
                                                             <td>
                                                                 <div>
-                                                                    {% if order.order_status == "Confirmed" or order.order_status == "Awaiting Payment" or order.order_status == "Shipped" %}
-                                                                    <form id="cancel-order-form" method="post" action="">
+                                                                    {% if order.order_status == "confirmed" or order.order_status == "Awaiting Payment" or order.order_status == "Shipped" %}
+                                                                    <form id="cancel-order-form" method="post" action="{% url 'order:cancel_order' order.id %}">
                                                                         {% csrf_token %}
                                                                         <button type="submit" class="badge bg-danger no-outline" style="height: 25px; width: 100px; padding: 0; text-align: center; display: flex; align-items: center; justify-content: center;">
                                                                             Cancel Order
@@ -280,12 +290,12 @@
                                                                     {% endif %}
                                                                 </div>
                                                                 <div style="margin-top:10px;">
-                                                                    {% if order.order_status == "Order Placed" %}
-                                                                    <form id="return-order-form" method="post" action="">
+                                                                    {% if order.is_active and order.order_status == "Delivery" %}
+                                                                    <form id="return-order-form" method="post" action="{% url 'order:return_order' order.id %}">
                                                                         {% csrf_token %}
                                                                         <button type="submit" class="badge bg-danger no-outline" style="height: 25px; width: 100px; padding: 0; text-align: center; display: flex; align-items: center; justify-content: center;">
                                                                             Return Order
-                                                                        </button>
+                                                                        </button> 
                                                                     </form>
                                                                     {% endif %}
                                                                 </div>
@@ -295,6 +305,9 @@
                                                                         Details
                                                                     </button>
                                                                 </div>
+                                                                {% if order.order_status == "Delivery" %}
+                                                                <a href="{% url 'order:user_invoice' order.id %}" class="btn btn-sm" style="display: block; width: 100%; margin: 2px 0; padding: 6px 2px; font-size: 11px; line-height: 1.5; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; cursor: pointer; border: 1px solid #000; border-radius: 3px; text-decoration: none; color: #fff; background-color: #000;">INVOICE DOWNLOAD</a>
+                                                                {% endif %}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -304,7 +317,7 @@
                                                                         {% for item in order.ordersub_set.all %}
                                                                         <div class="row mb-3">
                                                                             <div class="col-md-3">
-                                                                                <img src="{% static '{{ item.variant.product.thumbnail.url }}' %}" alt="{{ item.variant.product.product_name }}" class="img-fluid rounded">
+                                                                                <img src="{{ item.variant.product.thumbnail.url }}" alt="{{ item.variant.product.product_name }}" class="img-fluid rounded">
                                                                             </div>
                                                                             <div class="col-md-9">
                                                                                 <div class="row">
@@ -327,6 +340,13 @@
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>
+                                                                                {% if item.is_active and item.main_order.is_active and  item.main_order.order_status == "Delivery" %}
+                                                                                
+                                                                                    <form class="item-return-form" method="post" action="{% url 'order:individual_return' item.id %}">
+                                                                                        {% csrf_token %}
+                                                                                        <button type="submit" class="btn btn-danger btn-sm collapse-btn">Return</button>
+                                                                                    </form>
+                                                                                {% endif %}
                                                                             </div>
                                                                         </div>
                                                                         {% endfor %}
@@ -627,6 +647,29 @@
     </div>
   </div>
 
+  <!-- Return Order Confirmation Modal -->
+  <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reasonModalLabel">Provide Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reason-form">
+                    <div class="mb-3">
+                        <label for="reason-text" class="form-label">Reason:</label>
+                        <textarea class="form-control" id="reason-text" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+  </div>
+  
+
   
 </main>
 
@@ -678,7 +721,7 @@
         messages.forEach(message => {
             Swal.fire({
                 toast: true,
-                position: 'top-right',
+                position: 'button-right',
                 icon: 'success',
                 title: message,
                 showConfirmButton: false,
@@ -766,6 +809,82 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentForm;
+    
+        function handleConfirmation(form, title, text, isReturn = false) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (isReturn) {
+                            currentForm = form;
+                            const reasonModal = new bootstrap.Modal(document.getElementById('reasonModal'));
+                            reasonModal.show();
+                        } else {
+                            form.submit();
+                        }
+                    }
+                });
+            });
+        }
+    
+        // Handle reason form submission
+        const reasonForm = document.getElementById('reason-form');
+        reasonForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const reason = document.getElementById('reason-text').value;
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'reason';
+            hiddenInput.value = reason;
+            currentForm.appendChild(hiddenInput);
+    
+            const reasonModal = bootstrap.Modal.getInstance(document.getElementById('reasonModal'));
+            reasonModal.hide();
+            currentForm.submit();
+        });
+    
+        // Order-level cancel
+        const cancelOrderForms = document.querySelectorAll('#cancel-order-form');
+        cancelOrderForms.forEach(form => {
+            handleConfirmation(form, 'Cancel Order?', 'Are you sure you want to cancel this order?');
+        });
+    
+        // Order-level return
+        const returnOrderForms = document.querySelectorAll('#return-order-form');
+        returnOrderForms.forEach(form => {
+            handleConfirmation(form, 'Return Order?', 'Are you sure you want to return this order?', true);
+        });
+    
+        // Item-level cancel
+        const itemCancelForms = document.querySelectorAll('.item-cancel-form');
+        itemCancelForms.forEach(form => {
+            handleConfirmation(form, 'Cancel Item?', 'Are you sure you want to cancel this item?');
+        });
+    
+        // Item-level return
+        const itemReturnForms = document.querySelectorAll('.item-return-form');
+        itemReturnForms.forEach(form => {
+            handleConfirmation(form, 'Return Item?', 'Are you sure you want to return this item?', true);
+        });
+    });
+    
+</script>
+
 
 {% endblock %} 
 

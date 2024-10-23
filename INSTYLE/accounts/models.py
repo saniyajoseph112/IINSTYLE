@@ -2,6 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
+
+
+
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -45,3 +48,10 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+    
+      
+    @property
+    def username(self):
+        return f"{self.first_name} {self.last_name}"
+    
+

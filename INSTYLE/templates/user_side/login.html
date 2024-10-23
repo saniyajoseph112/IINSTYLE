@@ -1,89 +1,129 @@
 {% extends 'user_side/base_user.html' %}
 {% load static %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h1 class="text-center mb-4">LOGIN</h1>
-                <form method="post" action="" id="CustomerLoginForm" class="mb-4">
-                    {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="{{ form.username.id_for_label }}">Email:</label>
-                        {{ form.username }}
-                        {% for error in form.username.errors %}
-                            <div class="text-danger">{{ error }}</div>
-                        {% endfor %}
+<div class="container-fluid mt-2 white-bg">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card text-dark mb-5" style="height:450px;">
+
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-md-6 d-none d-md-block" style="width:350px; height:450px;">
+                            <video autoplay loop muted playsinline class="img-fluid h-100 object-fit-cover">
+                                <source src="{% static 'banner/video1.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="col-md-6 p-5">
+                            <h2 class="text-center mb-4">LOGIN</h2>
+                            <form method="post" action="" id="CustomerLoginForm">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label">Email *</label>
+                                    <input type="email" name="{{ form.username.name }}" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.password.id_for_label }}" class="form-label">Password *</label>
+                                    <input type="password" name="{{ form.password.name }}" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mb-2">Sign in</button>
+                            </form>
+                            <div class="text-center mb-2">
+                                <span class="text-muted">or</span>
+                            </div>
+                            <div class="d-grid gap-2 mb-3" style="50px;">
+                                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-outline-primary">
+                                    Sign in with Google
+                                </a>
+                      
+                            </div>
+                            <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none text-dark me-3">Forgot your password?</a>
+                            <a href="{% url 'accounts:register' %}" class="text-decoration-none text-dark">Create account</a>
+                        </div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="{{ form.password.id_for_label }}">Password:</label>
-                        {{ form.password }}
-                        {% for error in form.password.errors %}
-                            <div class="text-danger">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100 mb-3">LOGIN</button>
-                </form>
-                
-                <p class="text-center mb-3">or sign in with</p>
-                
-                <div class="d-grid gap-2 mb-3">
-                    <button class="btn btn-outline-secondary">
-                        {% if user.is_authenticated %}
-                        <p>Welcome, {{ user.username }}!</p>
-                        <a href="{% url 'logout' %}">Logout</a>
-                    {% else %}
-                        <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
-                    {% endif %}
-                    
-                    </button>
                 </div>
-                
-                <div class="text-center">
-                    <a href="#" class="text-decoration-none">Forgot your password?</a> |
-                    <a href="{% url 'accounts:register' %}" class="text-decoration-none">Create account</a>
+                <div class="card-footer border-top text-center py-3">
+                   
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
+</div>
+
+<style>
+    body, html {
+        background-color: white;
+        color: #333;
+    }
+    .white-bg {
+        background-color: white;
+        min-height: 100vh;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        background-color: white;
+    }
+    .btn-primary {
+        background-color: black;
+        border-color: black;
+    }
+    .btn-primary:hover {
+        background-color: black;
+        border-color: black;
+    }
+    .btn-outline-primary {
+        color: black;
+        border-color: black;
+    }
+    .btn-outline-primary:hover {
+        background-color: black;
+        color: white;
+    }
+    .form-control {
+        padding: 10px 15px;
+        border-color: #ced4da;
+    }
+    video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+    .card-footer a {
+        color: #333;
+        transition: color 0.3s ease;
+    }
+    .card-footer a:hover {
+        color: #007bff;
+    }
+</style>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
         {% if messages %}
-            const messages = [
-                {% for message in messages %}
-                    "{{ message }}",
-                {% endfor %}
-            ];
-            messages.forEach(message => {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-right',
-                    icon: 'success',
-                    title: message,
-                    showConfirmButton: false,
-                    timer: 3000
-                });
+        const messages = [
+            {% for message in messages %}
+            {
+                level: "{{ message.tags }}",
+                text: "{{ message }}"
+            },
+            {% endfor %}
+        ];
+        messages.forEach(message => {
+            Swal.fire({
+                toast: true,
+                position: 'bottom-right',
+                icon: message.level === 'success' ? 'success' : 'error',
+                title: message.text,
+                showConfirmButton: false,
+                timer: 3000
             });
+        });
         {% endif %}
     });
-    </script>
-</body>
-</html>
+</script>
 {% endblock %}
-
-
+{% endblock %}

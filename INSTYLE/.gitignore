@@ -1,0 +1,68 @@
+# Python bytecode
+*.py[cod]
+__pycache__/
+
+# Django migration files
+*/migrations/*.py
+*/migrations/*.pyc
+
+# Django media and static files
+/media
+/staticfiles
+/static
+
+# Environment files
+.env
+*.env
+
+# Virtual environment directories
+venv/
+env/
+ENV/
+venv.bak/
+venv/
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# SQLite database file
+db.sqlite3
+
+# Compiled code
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Node modules (if you're using Node.js for front-end)
+node_modules/
+
+# Coverage reports
+htmlcov/
+.coverage
+*.cover
+
+# Other caches and temp files
+*.swp
+*.bak
+*.tmp
+*.orig
+*.~ 
+
+# Secrets and keys
+secrets.json
+
+# Specific IDE or editor files
+*.iml
+.idea/
+.vscode/

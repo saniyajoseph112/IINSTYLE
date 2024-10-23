@@ -96,19 +96,19 @@
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-								<span class="ltext-202 cl2 respon2">
+								<span class="ltext-202 cl2 respon2" style="color:white;">
 									women Collection 2024
 								</span>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
-								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
+								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1" style="color:white;">
 									New arrivals
 								</h2>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-								<a href="" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+								<a href="{% url 'accounts:shop_page' %}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
 									Shop Now
 								</a>
 							</div>
@@ -116,17 +116,17 @@
 					</div>
 				</div>
 
-				<div class="item-slick1" style="background-image: url('{% static "banner/318854.jpg" %}');">
+				<div class="item-slick1" style="background-image: url('{% static "banner/3.jpg" %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
-								<span class="ltext-202 cl2 respon2">
+								<span class="ltext-202 cl2 respon2" style="color:white;">
 									Women New-Season
 								</span>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
-								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
+								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1"style="color:white;">
 									Fashion store
 								</h2>
 							</div>
@@ -144,13 +144,13 @@
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30">
 							<div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
-								<span class="ltext-202 cl2 respon2">
+								<span class="ltext-202 cl2 respon2"style="color:white;">
 									Women Collection 2018
 								</span>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
-								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1">
+								<h2 class="ltext-104 cl2 p-t-19 p-b-43 respon1"style="color:white;">
 									NEW SEASON
 								</h2>
 							</div>
@@ -176,7 +176,7 @@
 				<div class="block1 wrap-pic-w">
 					<img src="{% static 'banner/b7.jpg' %}" alt="IMG-BANNER">
 
-					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+					<a href="{% url 'accounts:shop_page' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
 							<span class="block1-name ltext-102 trans-04 p-b-8">
 								Women
@@ -201,7 +201,7 @@
 				<div class="block1 wrap-pic-w">
 					<img src="{% static 'banner/b6.jpg' %}" alt="IMG-BANNER">
 
-					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+					<a href="{% url 'accounts:shop_page' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
 							<span class="block1-name ltext-102 trans-04 p-b-8">
 								Fashion
@@ -226,7 +226,7 @@
 				<div class="block1 wrap-pic-w">
 					<img src="{% static 'banner/b4.jpg' %}" alt="IMG-BANNER">
 
-					<a href="" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+					<a href="{% url 'accounts:shop_page' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
 						<div class="block1-txt-child1 flex-col-l">
 							<span class="block1-name ltext-102 trans-04 p-b-8">
 								Store
@@ -330,27 +330,35 @@
 				<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 				<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 				<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-				<script>
-					document.addEventListener('DOMContentLoaded', (event) => {
-					{% if messages %}
-						const messages = [
-							{% for message in messages %}
-								"{{ message }}",
-							{% endfor %}
-						];
-						messages.forEach(message => {
-							Swal.fire({
-								toast: true,
-								position: 'top-right',
-								icon: 'success',
-								title: message,
-								showConfirmButton: false,
-								timer: 3000
-							});
-						});
-					{% endif %}
-				});
-				</script>
+				<!-- SweetAlert2 CSS (optional) -->
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded', (event) => {
+		{% if messages %}
+		const messages = [
+			{% for message in messages %}
+			{
+				level: "{{ message.tags }}",
+				text: "{{ message }}"
+			},
+			{% endfor %}
+		];
+		messages.forEach(message => {
+			Swal.fire({
+				toast: true,
+				position: 'bottom-right',
+				icon: message.level === 'success' ? 'success' : 'error',
+				title: message.text,
+				showConfirmButton: false,
+				timer: 3000
+			});
+		});
+		{% endif %}
+	});
+</script>
+				
 	
 	
 {% endblock %}

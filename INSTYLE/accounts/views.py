@@ -15,6 +15,19 @@ from .forms import Emailauthentication
 from category.models import *
 from Brands.models import *
 from django.http import JsonResponse
+from utils.decorators import login_required
+from django.contrib.auth.forms import PasswordResetForm
+from django.db.models.query_utils import Q
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.template.loader import render_to_string
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse
+from django.contrib.auth.forms import SetPasswordForm
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.core.paginator import Paginator
 
 
 
@@ -24,29 +37,38 @@ User = get_user_model()
 
 def home(request):
     products =Products.objects.all()
-    return render (request ,'User_side/home.html',{'products':products})
+    return render (request ,'user_side/home.html',{'products':products})
+
 
 def login(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:home')
+    
     if request.method == 'POST':
         form = Emailauthentication(request, data=request.POST)
         logger.debug(f"Form Valid: {form.is_valid()}")  # Debug statement
+        
         if form.is_valid():
             user = form.get_user()
             logger.debug(f"Authenticated User: {user}")
+            
             if user and user.is_active and not user.is_blocked:
                 auth_login(request, user)
+                messages.success(request, 'Account Activated Successfully')
                 return redirect('accounts:home')
+            else:
+                messages.error(request, 'Account is inactive or blocked.')
         else:
-            logger.debug(form.errors)  # Print out the form errors for debugging
-    
+            logger.debug(f"Form Errors: {form.errors}")
+            messages.error(request, 'Invalid credentials. Please try again.')
+
     form = Emailauthentication()
-    return render(request, 'user_side/login.html', {'form':form})
+    return render(request, 'user_side/login.html', {'form': form})
 
 
 def logout(request):
     auth_logout(request)
     return redirect('accounts:home')
-
 
 
 def shop_page(request):
@@ -84,6 +106,9 @@ def shop_page(request):
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:home')
+    
     if request.method == 'POST':
         forms=UserRegister(request.POST)
         if forms.is_valid():
@@ -129,14 +154,14 @@ def register(request):
             
             send_mail(subject, message, email_from, recipient_list)
 
+            messages.success(request, 'An Otp send to email. Please verify to complete registration')
             return redirect('accounts:verify_otp')
     
     forms = UserRegister()
+    messages.error(request,'invaild registerion')
     return render(request, 'user_side/register.html', {'forms':forms})
 
         
-
-
 def verify_otp(request):
     if request.method=='POST':
         forms=OtpForm(request.POST)
@@ -169,6 +194,7 @@ def verify_otp(request):
                 except IntegrityError:
                     messages.error(request, 'An error occurred while creating the user. Please try again.')
             else:
+                messages.error(request, 'Invalid OTP')
                 forms.add_error('otp', 'Invalid OTP')
     else:
         forms= OtpForm()
@@ -213,10 +239,11 @@ def resend_otp(request):
 def product_detail_user(request,pk):
     products=Products.objects.get(id=pk) 
     images = ProductImage.objects.filter(product=products)
-    related_products=Products.objects.filter(product_category=products.product_category)
+    related_products=Products.objects.filter(product_category=products.product_category).exclude(id=products.id)
     varients=ProductVariant.objects.filter(product=products)
     reviews=Review.objects.filter(product=products)
-    return render(request,'user_side/product_detailuser.html',{'products':products,'images':images,'related_products':related_products,'reviews':reviews,'varients':varients}) 
+    review_count = reviews.count()
+    return render(request,'user_side/product_detailuser.html',{'products':products,'images':images,'related_products':related_products,'reviews':reviews,'review_count':review_count,'varients':varients}) 
 
 
 
@@ -246,4 +273,109 @@ def search(request):
         data = {'results': []}
 
     return JsonResponse(data)
+
+
+def password_reset_request(request):
+    if request.method == "POST":
+        password_reset_form = PasswordResetForm(request.POST)
+        if password_reset_form.is_valid():
+            data = password_reset_form.cleaned_data['email']
+            associated_users = User.objects.filter(Q(email=data))
+            if associated_users.exists():
+                for user in associated_users:
+                    subject = "Password Reset Requested"
+                    email_template_name = "user_side/password_reset_email.txt"
+                    c = {
+                        "email": user.email,
+                        'domain': '127.0.0.1:8000',
+                        'site_name': 'INSTYLE',
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "user": user,
+                        'token': default_token_generator.make_token(user),
+                        'protocol': 'http',
+                    }
+                    email_content = render_to_string(email_template_name, c)
+                    try:
+                        send_mail(
+                            subject,
+                            email_content,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [user.email],
+                            fail_silently=False,
+                        )
+                    except BadHeaderError:
+                        return HttpResponse('Invalid header found.')
+                    return redirect("accounts:password_reset_done")
+    
+    password_reset_form = PasswordResetForm()
+    return render(request, "user_side/password_reset.html", {"password_reset_form": password_reset_form})
+
+
+def password_reset_done(request):
+    return render(request, 'user_side/password_reset_done.html')
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your password has been set. You may go ahead and log in now.')
+                return redirect('accounts:password_reset_complete')
+        else:
+            form = SetPasswordForm(user)
+        return render(request, 'user_side/password_reset_confirm.html', {'form': form})
+    else:
+        messages.error(request, 'The password reset link was invalid, possibly because it has already been used. Please request a new password reset.')
+        return redirect('accounts:password_reset')
+    
+
+
+def password_reset_complete(request):
+    return render(request, 'user_side/password_reset_complete.html')
+
+
+
+
+def about_us(request):
+    return render(request,'user_side/about_us.html')
+
+def contact_us(request):
+    if request.method == "POST":
+        mail = request.POST.get('email')
+        message = request.POST.get('message')
+
+
+        send_mail(
+            subject=f'New Contact Form Submission from {mail}',
+            message=(
+                f"Dear Team,\n\n"
+                f"You have received a new contact form submission on your website. Here are the details:\n\n"
+                f"Email: {mail}\n\n"
+                f"Message:\n{message}\n\n"
+                f"Please respond to the inquiry at your earliest convenience.\n\n"
+                f"Best regards,\n"
+                f"INSTYLE"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.DEFAULT_FROM_EMAIL],
+            fail_silently=False,
+        )
+
+
+
+    return render(request,'user_side/contact_us.html')
+
+
+
+
+
+
+
 

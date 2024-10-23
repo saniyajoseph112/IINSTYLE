@@ -13,6 +13,21 @@
     .zoom-container:hover .zoom-image {
         transform: scale(1.5);
     }
+	.custom-toast {
+		z-index: 9999; /* Set to a higher value */
+	}
+	#addToWishlistButton {
+		background: none; /* No background */
+		border: none; /* No border */
+		cursor: pointer; /* Pointer cursor */
+	}
+	
+	#addToWishlistButton i {
+		font-size: 24px; /* Size of the heart icon */
+	}
+	
+	
+	
 </style>
 	<!-- breadcrumb -->
 	<div class="container">
@@ -73,7 +88,7 @@
 						</h3>
 	
 						<h2 class="mtext-106 cl2 ">
-							Offer Price:{{ products.price }}
+							Offer Price:{{ products.offer_price }}
 						</h2>
 
 						<p class="stext-102 cl3 p-t-23">
@@ -91,12 +106,16 @@
 									<div class="rs1-select2 bor8 bg0">
 										<select class="js-select2" name="variant_id" id="variantSelect">
 											{% for variant in varients %}
-											<option value="{{ variant.id }}">{{ variant.size }}</option>
+												<option value="{{ variant.id }}" {% if forloop.first %}selected{% endif %}>{{ variant.size }}</option>
 											{% endfor %}
-										</select>										
+										</select>
 										<div class="dropDownSelect2"></div>
 									</div>
 								</div>
+								
+								
+								
+								
 							</div>
 
 							
@@ -105,15 +124,29 @@
                             <button type="button" id="addToCartButton" name="add" class="btn product-form__cart-submit" style="background-color: black; color: white;" data-product-id="{{ product.id }}">
 									Add to cart
 							</button>
+							
+							<button type="button" id="addToWishlistButton" name="add" class="btn product-form__cart-submit" 
+									data-product-id="{{ product.id }}">
+								<i class="fa fa-heart" id="wishlistIcon" aria-hidden="true"></i>
+								<span id="wishlistText"></span>
+							</button>
+
+
+
+
+
+							
 
 							</div>
+							
+							
 						</div>
 
 						<!--  -->
 						<div class="flex-w flex-m p-l-100 p-t-40 respon7">
 							<div class="flex-m bor9 p-r-10 m-r-11">
 								<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
-									<i class="zmdi zmdi-favorite"></i>
+								
 								</a>
 							</div>
 
@@ -147,7 +180,7 @@
 						</li>
 
 						<li class="nav-item p-b-10">
-							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews (1)</a>
+							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews ({{ review_count }})</a>
 						</li>
 					</ul>
 
@@ -157,7 +190,7 @@
 						<div class="tab-pane fade show active" id="description" role="tabpanel">
 							<div class="how-pos2 p-lr-15-md">
 								<p class="stext-102 cl6">
-									Aenean sit amet gravida nisi. Nam fermentum est felis, quis feugiat nunc fringilla sit amet. Ut in blandit ipsum. Quisque luctus dui at ante aliquet, in hendrerit lectus interdum. Morbi elementum sapien rhoncus pretium maximus. Nulla lectus enim, cursus et elementum sed, sodales vitae eros. Ut ex quam, porta consequat interdum in, faucibus eu velit. Quisque rhoncus ex ac libero varius molestie. Aenean tempor sit amet orci nec iaculis. Cras sit amet nulla libero. Curabitur dignissim, nunc nec laoreet consequat, purus nunc porta lacus, vel efficitur tellus augue in ipsum. Cras in arcu sed metus rutrum iaculis. Nulla non tempor erat. Duis in egestas nunc.
+									{{ products.product_description }}
 								</p>
 							</div>
 						</div>
@@ -211,10 +244,13 @@
 											<span class="stext-102 cl3 size-205">
 												Size
 											</span>
-
+											
 											<span class="stext-102 cl6 size-206">
-												XL, L, M, S
+												{% for size in varients %}
+												{{ size.size }}
+												{% endfor %}
 											</span>
+											
 										</li>
 									</ul>
 								</div>
@@ -311,7 +347,7 @@
 			</span>
 
 			<span class="stext-107 cl6 p-lr-25">
-				Categories: Jacket, Men
+				Categories:women dresses
 			</span>
 		</div>
 	</section>
@@ -345,13 +381,9 @@
 
 							<div class="block2-txt flex-w flex-t p-t-14">
 								<div class="block2-txt-child1 flex-col-l ">
-									<a href="products-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-										Esprit Ruffle Shirt
-									</a>
+									
 
-									<span class="stext-105 cl3">
-										$16.64
-									</span>
+								
 								</div>
 
 								<div class="block2-txt-child2 flex-r p-t-3">
@@ -396,6 +428,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- Include SweetAlert Library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 	document.addEventListener('DOMContentLoaded', (event) => {
@@ -411,7 +444,7 @@
 			messages.forEach(message => {
 				Swal.fire({
 					toast: true,
-					position: 'top-right',
+					position: 'bottom-right',
 					icon: message.tag === 'error' ? 'error' : 'success',
 					title: message.text,
 					showConfirmButton: false,
@@ -447,6 +480,146 @@
 			}
 		});
 	});
+
+
+	// add to wishlist
+	
+
+	
+	
+	$(document).ready(function() {
+		// Set the variant ID on change
+		$('#variantSelect').change(function() {
+			var selectedVariantId = $(this).val();
+			$('#addToWishlistButton').data('variant-id', selectedVariantId); // Update button data attribute
+			console.log('Selected Variant ID set on button:', selectedVariantId); // Debugging
+	
+			// Check if the newly selected variant is in the wishlist
+			checkVariantInWishlist(selectedVariantId);
+		});
+	
+		// Initialize with the first variant ID if available
+		var initialVariantId = $('#variantSelect').val();
+		$('#addToWishlistButton').data('variant-id', initialVariantId); // Set initial variant ID
+		console.log('Initial Variant ID set on button:', initialVariantId); // Debugging
+	
+		// Check if the initial variant is already in the wishlist
+		checkVariantInWishlist(initialVariantId);
+	
+		// Add to wishlist button click
+		$('#addToWishlistButton').click(function() {
+			var variantId = $(this).data('variant-id');  // Get the selected variant ID from button data
+			console.log('Variant ID:', variantId);   // Debugging
+	
+			if (!variantId) {
+				Swal.fire({
+					toast: true,
+					position: 'bottom-right',
+					icon: 'error',
+					title: 'Variant ID is missing',
+					showConfirmButton: false,
+					timer: 3000
+				});
+				return; // Stop execution if ID is missing
+			}
+	
+			$.ajax({
+				type: 'POST',
+				url: '{% url "userdash:add_to_wishlist" %}',  // Explicit URL
+				contentType: 'application/json',
+				headers: {
+					'X-CSRFToken': '{{ csrf_token }}'
+				},
+				data: JSON.stringify({
+					'variant_id': variantId  // Only send variant ID
+				}),
+				success: function(response) {
+					if (response.success) {
+						// Update button appearance based on action
+						if (response.action === 'added') {
+							updateWishlistButtonText(true);
+							Swal.fire({
+								toast: true,
+								position: 'bottom-right',
+								icon: 'success',
+								title: 'Item added to wishlist successfully!',
+								showConfirmButton: false,
+								timer: 3000
+							});
+						} else if (response.action === 'removed') {
+							updateWishlistButtonText(false);
+							Swal.fire({
+								toast: true,
+								position: 'bottom-right',
+								icon: 'success',
+								title: 'Item removed from wishlist.',
+								showConfirmButton: false,
+								timer: 3000
+							});
+						}
+					} else {
+						Swal.fire({
+							toast: true,
+							position: 'bottom-right',
+							icon: 'error',
+							title: 'Error: ' + response.error,
+							showConfirmButton: false,
+							timer: 3000
+						});
+					}
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX error:', error);
+					console.log(xhr.responseText);
+					Swal.fire({
+						toast: true,
+						position: 'bottom-right',
+						icon: 'error',
+						title: 'An error occurred. Please try again.',
+						showConfirmButton: false,
+						timer: 3000
+					});
+				}
+			});
+		});
+	
+		function checkVariantInWishlist(variantId) {
+			// Make an AJAX call to check if the variant is in the wishlist
+			$.ajax({
+				type: 'GET',
+				url: '{% url "userdash:check_variant_in_wishlist" %}',  // Define this URL in your Django views
+				data: {
+					'variant_id': variantId
+				},
+				success: function(response) {
+					// Update the button text based on the wishlist status
+					updateWishlistButtonText(response.in_wishlist);
+				}
+			});
+		}
+	
+		function updateWishlistButtonText(isInWishlist) {
+			if (isInWishlist) {
+				$('#wishlistIcon').css('color', 'red'); // Change icon color to red if in wishlist
+			} else {
+				$('#wishlistIcon').css('color', 'black'); // Default color for not in wishlist
+			}
+		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+
 	</script>
 	
 {% endblock %}

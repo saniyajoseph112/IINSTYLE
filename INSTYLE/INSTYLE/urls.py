@@ -28,7 +28,9 @@ urlpatterns = [
     path('products/',include('product.urls')),
     path('userpanel/',include('userpanel.urls')),
     path('cart/',include('cart.urls')),
-    path('auth/', include('social_django.urls', namespace='social')),
+    path('auth/', include('social_django.urls',namespace='social')),
+    path('order/',include('order.urls')),
+    path('coupon/',include('coupon.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
