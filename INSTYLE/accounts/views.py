@@ -158,7 +158,6 @@ def register(request):
             return redirect('accounts:verify_otp')
     
     forms = UserRegister()
-    messages.error(request,'invaild registerion')
     return render(request, 'user_side/register.html', {'forms':forms})
 
         

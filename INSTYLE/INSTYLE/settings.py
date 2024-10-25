@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p!^yxiq@%)h9(8e#@!@xf7j97no(e3vi8@27&p0#c7g_5-l5$o'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -123,8 +126,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # Keep the default authentication backend
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '746091800744-qgsqvrhrjhgbfet2vuqu0d9msj3ophbi.apps.googleusercontent.com'  # Your Google Client ID
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'  # Your Google Client Secret
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET') 
 
 
 LOGIN_REDIRECT_URL = '/'  # URL to redirect after successful login
@@ -137,13 +140,13 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'  # Adjust this to your actual l
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server
-EMAIL_PORT = 587  # Your SMTP port
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER =  'josephsaniya671@gmail.com'
-EMAIL_HOST_PASSWORD = 'znru lcsi qpbx moxu'
-DEFAULT_FROM_EMAIL = 'josephsaniya671@gmail.com'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')  # Your SMTP server
+EMAIL_PORT = os.getenv('EMAIL_PORT')  # Your SMTP port
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_HOST_USER =  os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 
 # Internationalization
